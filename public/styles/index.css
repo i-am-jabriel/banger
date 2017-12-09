@@ -1,0 +1,62 @@
+.main-container{
+    margin-top:80px;
+}
+
+.settings-view{
+}
+body{
+    text-align: center;
+    background-color:#ccc;
+}
+
+.match-buttons{
+    font-size:64px;
+}
+.match-buttons > span{
+    cursor: pointer;
+}
+
+.match-buttons svg{
+    margin:0 5px;
+    transition:all 0.3s;
+}
+
+.show-matches-container{
+    max-width:500px;
+    border:1px solid black;
+    border-radius:15px;
+    background-color:#fff;
+    margin-bottom:40px;
+}
+.show-matches-container .user-name{
+    margin:10px 0 5px;
+
+}
+.show-matches-container .bio{
+    margin:0 auto;
+    max-width:400px;
+    background-color:#f7f7f9;
+    border-radius:2px;
+    padding:20px;
+    text-align:left;
+}
+
+
+.red{
+    color:red;
+}
+.red:hover{
+    color:darkred;
+}
+.yellow{
+    color:yellow;
+}
+.yellow:hover{
+    color:darkgoldenrod;
+}
+.green{
+    color:limegreen;
+}
+.green:hover{
+    color:darkgreen;
+}
