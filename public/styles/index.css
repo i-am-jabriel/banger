@@ -134,3 +134,14 @@ body{
 .alert.clickable{
     cursor: pointer;
 }
+
+.single-match-header{
+    display:flex;
+}
+.single-match-header h3{
+    flex:1;
+}
+.single-match-header .navbar-nav{
+    float:right;
+    margin-top:5px;
+}

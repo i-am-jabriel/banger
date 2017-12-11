@@ -1,5 +1,5 @@
 import React from 'react';
-import store, { updateMessagesList, fetchMessages, setMatch, sendMessage } from '../../Redux';
+import store, { updateMessagesList, fetchMessages, setMatch, sendMessage, deleteMatchBetween } from '../../Redux';
 import { connect } from 'react-redux';
 
 
@@ -17,9 +17,26 @@ function SingleMatch(props){
         sendMessage(event.target[0].value,match.id,props.user.id);
         event.target[0].value='';
     }
+    function unlike(){
+        window.location.hash='/matches';
+        deleteMatchBetween(props.user.id,props.matchId);
+    }
     return (
         <div className='container single-match-container'>
-            <h3>{match.displayName}</h3>
+            <div className='single-match-header'>
+                <h3>{match.displayName}</h3>
+                <ul className='navbar-nav'>
+                    <li className='nav-item dropdown'>
+                        <a className="nav-link dropdown-toggle clickable" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Settings
+                        </a>
+                        <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a className="dropdown-item clickable" onClick={unlike}>Unmatch</a>
+                            <a className="dropdown-item clickable" onClick={unlike}>Report</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <hr />
             <div className='chat' id='chat'>
                 {props.messages.map(message=>{

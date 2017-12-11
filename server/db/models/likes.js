@@ -56,9 +56,6 @@ Likes.findAllMutalLikes = function(userId){
         ))
         //and make sure you return users that are not the searcher or blank
         //dont know why i had to do this, but here i am
-        .then(users=>users.filter(user=>{
-            console.log(userId,user.id);
-            return user&&userId!==user.id
-        }))
+        .then(users=>users.filter(user=> user&&userId!==user.id))
     })
 }

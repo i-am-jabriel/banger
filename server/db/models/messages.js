@@ -16,7 +16,8 @@ Messages.getMessagesBetweenUsers = function(id1,id2){
         where:{
             user_from:{[Op.or]:[id1,id2]},
             user_to:{[Op.or]:[id1,id2]},
-        }
+        },
+        order: [ ['updatedAt', 'ASC'] ]
     })
 }
 

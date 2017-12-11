@@ -61,7 +61,7 @@ Users.prototype.likeUser = function(targetId){
             if(pastEntry){
                 sendEventToId(targetId,'match',this);
                 Users.findById(targetId)
-                    .then(target=>sendEventToId(id,'match',target));
+                    .then(target=>sendEventToId(this.id,'match',target));
                 return pastEntry.update({requited:true})
             }
             return Likes.findOne({
@@ -91,9 +91,9 @@ Users.prototype.votedOnUser = function(targetId){
 
 Users.prototype.getNextUser = function(){
     return Users.findAll()
-    .then(users=>{
-            return getRandomElement(subtractFromArray(users,[this.id].concat(Array.from(this.viewedUsers))));
-        })
+    .then(users=>
+            getRandomElement(subtractFromArray(users,[this.id].concat(Array(...this.viewedUsers))))
+        )
         /*.then(user => {
             return this.viewUser(user.id);
         });*/
@@ -107,7 +107,7 @@ function subtractFromArray(arr1,arr2){
     arr1.map(item => item.id).forEach((item,i) => {
         if(arr2.indexOf(item)<0)val.push(arr1[i]);
     });
-    console.log('length sorted down',arr1.length,val.length);
+    console.log('length  sorted down',arr1.length,val.length,'l2.len',arr2.len);
     return val;
 }
 
