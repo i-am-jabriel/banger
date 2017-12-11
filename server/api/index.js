@@ -1,6 +1,6 @@
 'use strict'
 const apiRouter = require('express').Router()
-const { db , Users, Likes } = require('../db/models/')
+const { db , Users, Likes, Messages } = require('../db/models/')
 const { Op } = require('sequelize');
 const hash = require('../../hash');
 
@@ -12,7 +12,39 @@ apiRouter.get('/users', (req, res) => {
 	.then(users => {
 		res.json(users);
 	})
+	.catch(err=>{
+		res.sendStatus(404);
+	})
 })
+
+
+//get all messages
+apiRouter.get('/messages',(req,res) => {
+	return Messages.findAll()
+	.then(messages =>{
+		res.json(messages);
+	})
+	.catch(err=>res.sendStatus(404));
+});
+
+apiRouter.post('/messages',(req,res) => {
+	const {data} = req.body;
+	const {message,to_id,from_id} = data;
+
+	if(!hash.checkUserHash(req.body.hash,data))return res.sendStatus(404);
+	return Messages.sendMessage(message,to_id,from_id)
+		.then(res.sendStatus(200));
+})
+
+
+//get all messages between two users
+apiRouter.get('/messages/:from/:to',(req,res) => {
+	return Messages.getMessagesBetweenUsers(req.params.from,req.params.to)
+	.then(messages =>{
+		res.json(messages);
+	})
+	.catch(err=>res.sendStatus(404));
+});
 
 //Get Info on a specific user
 apiRouter.get('/users/:uid',(req,res) => {
@@ -20,16 +52,12 @@ apiRouter.get('/users/:uid',(req,res) => {
 	.then(user=>{
 		res.json(user);
 	})
+	.catch(err=>res.sendStatus(404));
 });
 
 //Get all mutal likes 
 apiRouter.get('/likes/:uid/', (req, res) => {
-	return Likes.findAll({
-		where:{
-			[Op.or]: [{targetId: req.params.uid}, {ownerId : req.params.uid}],
-			requited:true
-		}
-	})
+	return Likes.findAllMutalLikes(Number(req.params.uid))
 	.then(users => {
 		res.json(users);
 	})
@@ -44,6 +72,7 @@ apiRouter.get('/nextUser/:uid/',(req,res) =>{
 		.then(user => {
 			res.json(user);
 		})
+		.catch(err=>res.sendStatus(404));
 });
 
 apiRouter.post('/users', (req,res) => {
@@ -51,7 +80,8 @@ apiRouter.post('/users', (req,res) => {
 	return Users.createFromFbData(req.body.data)
 		.then(user => {
 			res.json(user);
-		});
+		})
+		.catch(err=>res.sendStatus(404));
 });
 
 
@@ -99,6 +129,7 @@ apiRouter.post('/likes',(req,res) => {
 		.then(user =>{
 			return res.json(user)
 		})
+		.catch(err=>res.sendStatus(404));
 });
 
 // You can put all routes in this file; HOWEVER, this file should almost be like a table of contents for the routers you create

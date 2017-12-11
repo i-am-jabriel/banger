@@ -5,6 +5,9 @@ import Promise from 'bluebird';
 import Login from './Login';
 import Header from './Header';
 import Settings from './Settings';
+import Alert from  './Alert';
+import AllMatches from './AllMatches';
+import SingleMatch from './SingleMatch';
 import ShowNextUser from './ShowNextUser';
 import store, { setLoginStatus, createUser } from '../../Redux';
 
@@ -28,11 +31,20 @@ function Main(props){
             <div>
                 <Header store={store} loginStatus={loginStatus}/>
                 <div className='main-container container-fluid'>
+                    <Alert store={store}/>
+                    {(!loginStatus && 
                     <div className='row'>
-                        {(!loginStatus && <Login checkLoginStatus={checkLoginStatus}/>) }
-                        <Route exact path="/settings" render={()=><Settings loginStatus={loginStatus} user={user}/>} />
-                        {(loginStatus && <Route exact path="/" render={()=><ShowNextUser store={store}/>} /> ) }
+                        <Login checkLoginStatus={checkLoginStatus}/>
                     </div>
+                    )}
+                    {(loginStatus && 
+                    <div className='row'>
+                        <Route exact path="/settings" render={()=><Settings loginStatus={loginStatus} user={user}/>} />
+                        <Route exact path='/matches' render={()=><AllMatches store={store} /> } />
+                        <Route exact path='/matches/:uid' render={(props)=><SingleMatch store={store} matchId={props.match.params.uid}/>} /> 
+                        <Route exact path="/" render={()=><ShowNextUser store={store}/>} /> 
+                    </div>
+                    )}
                 </div>
             </div>
         </HashRouter>
@@ -56,4 +68,5 @@ FB.getLoginStatus(function(res) {
 function checkLoginStatus(res){
     store.dispatch(setLoginStatus(res.status==='connected'||res.accessToken));
     createUser(res.authResponse||res);
+    
 }

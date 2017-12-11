@@ -6,6 +6,8 @@ const Users = require('./users');
 
 const Likes = require('./likes');
 
+const Messages = require ('./messages');
+
 /*
 I mean i tried this i promise
 
@@ -25,4 +27,4 @@ Users.belongsToMany(Users,{
 
 // This is also probably a good place for you to set up your associations
 
-module.exports = { db , Users , Likes };
+module.exports = { db , Users , Likes , Messages };

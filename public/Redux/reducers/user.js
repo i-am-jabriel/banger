@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { createUserHash, createGenericHash } from '../../../hash';
-import store from '../';
+import store, {fetchMatches} from '../';
+import socket from '../../Socket';
+
 //import socket from '../socket';
 
 // ACTION TYPES
@@ -37,9 +39,15 @@ export function createUser(fbData){
         data,
         hash:createUserHash(data)
     }
+    
     axios.post('/api/users',val)
         .then(res => res.data)
-        .then(user => store.dispatch(updateUser(user)));
+        .then(user => {
+            if(!user)return;
+            socket.emit('login',{id:user.id});
+            store.dispatch(updateUser(user))
+            fetchMatches();
+        });
 }
 
 export function updateServerWithUserData(inputData){
@@ -53,5 +61,8 @@ export function updateServerWithUserData(inputData){
     }
     axios.post('/api/users/'+inputData.id,val)
         .then(res => res.data)
-        .then(user => store.dispatch(updateUser(user)));
+        .then(user => {
+            if(!user)return;
+            store.dispatch(updateUser(user))
+        });
 }

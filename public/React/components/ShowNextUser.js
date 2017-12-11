@@ -7,7 +7,7 @@ function ShowNextUser (props){
     function skip(){
         fetchNextUser(user.id)
     }
-    function yay(){
+    function yay(){ 
         voteOnUser(user.id,nextUser.id,true);
     }
     function nay(){
@@ -16,7 +16,9 @@ function ShowNextUser (props){
     if(user.id && !nextUser.displayName)fetchNextUser(user.id);
     return (
         <div className='show-matches-container container'>
-            <div className='user'>
+            { nextUser.displayName ? (
+
+                <div className='user'>
                 <h3 className='user-name'>{nextUser.displayName}</h3>
                 <hr />
                 <img src={nextUser.pictureUrl} />
@@ -28,6 +30,11 @@ function ShowNextUser (props){
                     <span onClick={nay} data-toggle='tooltip' title='No'><i className='red far fa-times-circle' /></span>
                 </div>
             </div>
+            ) : (
+                <div className='no-user' style={{height:'50px',margin:'220px 0'}}>
+                    <p>No available new users please check again later!</p>
+                </div>
+            )}  
         </div>
     )
 }

@@ -1,8 +1,9 @@
 const Sequelize = require('sequelize');
-const {fn,col} = Sequelize;
+const {fn,col,Op} = Sequelize;
 const db = require('../');
 const Likes = require('./likes');
-//const Author = require('./author');
+const Messages = require('./messages');
+const { sendEventToId } = require('../../socket');
 
 const Users = db.define('users', {
     email: {
@@ -25,7 +26,27 @@ const Users = db.define('users', {
         type: Sequelize.ARRAY(Sequelize.INTEGER),
         defaultValue:[],
     },
+    fakeUser:{
+        type:Sequelize.BOOLEAN,
+        defaultValue:false,
+    }
 });
+//--Table Functions
+Users.createFromFbData = function(fbData){
+    console.log(fbData);
+    return Users.findOne({where: {fbId: fbData.id}})
+    .then(potentialUser =>{
+        if(potentialUser)return potentialUser;
+        else return Users.create({
+            displayName: fbData.name,
+            fbId: fbData.id,
+            pictureUrl: fbData.pictureUrl,
+            email: fbData.email
+        })
+    });
+}
+
+//--Row Functions
 Users.prototype.likeUser = function(targetId){
     return Users.findOne({where:{id:targetId}})
         .then(newUser => {
@@ -38,8 +59,21 @@ Users.prototype.likeUser = function(targetId){
         })
         .then(pastEntry => {
             if(pastEntry){
+                sendEventToId(targetId,'match',this);
+                Users.findById(targetId)
+                    .then(target=>sendEventToId(id,'match',target));
                 return pastEntry.update({requited:true})
             }
+            return Likes.findOne({
+                where:{
+                    ownerId:this.id,
+                    targetId:targetId,
+                }
+            })
+        })
+        .then(pastEntry => {
+            if(pastEntry)return pastEntry;
+            sendEventToId(targetId,'like',this);
             return Likes.create({
                 ownerId:this.id,
                 targetId:targetId,
@@ -48,19 +82,6 @@ Users.prototype.likeUser = function(targetId){
         .catch(console.error)
 }
 
-Users.createFromFbData = function(fbData){
-    console.log(fbData);
-    return Users.findOne({where: {fbId: fbData.id}})
-        .then(potentialUser =>{
-            if(potentialUser)return potentialUser;
-            else return Users.create({
-                displayName: fbData.name,
-                fbId: fbData.id,
-                pictureUrl: fbData.pictureUrl,
-                email: fbData.email
-            })
-        });
-}
 
 Users.prototype.votedOnUser = function(targetId){
     return this.update({
@@ -70,8 +91,8 @@ Users.prototype.votedOnUser = function(targetId){
 
 Users.prototype.getNextUser = function(){
     return Users.findAll()
-        .then(users=>{
-            return getRandomElement(subtractFromArray(users,[this.id].concat(this.viewedUsers)));
+    .then(users=>{
+            return getRandomElement(subtractFromArray(users,[this.id].concat(Array.from(this.viewedUsers))));
         })
         /*.then(user => {
             return this.viewUser(user.id);
@@ -86,6 +107,7 @@ function subtractFromArray(arr1,arr2){
     arr1.map(item => item.id).forEach((item,i) => {
         if(arr2.indexOf(item)<0)val.push(arr1[i]);
     });
+    console.log('length sorted down',arr1.length,val.length);
     return val;
 }
 

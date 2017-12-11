@@ -21,5 +21,4 @@ export default function reducer (state = false, action) {
     default:
       return state;
   }
-
 }

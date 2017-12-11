@@ -9,6 +9,8 @@ export default function Settings(props){
     $('#profile-bio').val(user.bio);
     return loginStatus && (
         <div className='profile-container container'>
+            <h3>Settings</h3>
+            <hr />
             <form onSubmit={checkData}>
                 <table><tbody>
                     <tr>
