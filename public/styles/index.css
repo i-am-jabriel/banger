@@ -1,9 +1,12 @@
-.main-container{
-    margin-top:80px;
-}
 body{
     text-align: center;
     background-color:#ccc;
+    overflow:hidden;
+    max-height:100vh;
+    /* font-size:10px; */
+}
+.main-container{
+    margin-top:60px;
 }
 
 .match-buttons{
@@ -110,8 +113,6 @@ body{
 .chat-input{
     flex:1;
 }
-.chat-submit{
-}
 .chat{
     height:400px;
     overflow-y:scroll;
@@ -144,4 +145,12 @@ body{
 .single-match-header .navbar-nav{
     float:right;
     margin-top:5px;
+}
+.show-matches-container{
+    position:relative;
+}
+.show-matches-container-clone{
+    position:absolute;
+    top:0;
+    padding:0 25px;
 }

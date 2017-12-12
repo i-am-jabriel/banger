@@ -60,15 +60,17 @@ const mapStateToProps = function (state) {
 
 export default connect(mapStateToProps)(Main);
 
-window.FB && FB.getLoginStatus(function(res) {
-    //console.log(response)
-    checkLoginStatus(res);
-});
+window.fbAsyncInit = function() {
+     FB.getLoginStatus(function(res) {
+        //console.log(response)
+        checkLoginStatus(res);
+     });
+}
 
-if(!window.FB){
+/*if(!window.FB){
     store.dispatch(setLoginStatus(true));
     createUser({id:'10210693224551695'});
-}
+}*/
 
 function checkLoginStatus(res){
     store.dispatch(setLoginStatus(res.status==='connected'||res.accessToken));

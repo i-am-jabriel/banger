@@ -118,6 +118,7 @@ apiRouter.post('/likes',(req,res) => {
 	if(!hash.checkGenericHash(req.body.hash,req.body.data))return res.sendStatus(404);
 	return Users.findById(req.body.data.userId)
 		.then(user => {
+			if(!user)throw Error('thats me');
 			return user.votedOnUser(req.body.data.targetId);
 		})
 		.tap(user =>{
@@ -129,7 +130,7 @@ apiRouter.post('/likes',(req,res) => {
 		.then(user =>{
 			return res.json(user)
 		})
-		.catch(err=>res.sendStatus(404));
+		.catch(err=>console.log(err) && res.sendStatus(404));
 });
 
 //More secure this way, dont want anybody to just come in and request to delete data...

@@ -90,10 +90,16 @@ Users.prototype.votedOnUser = function(targetId){
 }
 
 Users.prototype.getNextUser = function(){
+    let arr = [this.id].concat(this.getDataValue('viewedUsers'));
     return Users.findAll()
     .then(users=>
-            getRandomElement(subtractFromArray(users,[this.id].concat(Array(...this.viewedUsers))))
+            getRandomElement(
+                subtractFromArray(
+                    users,
+                    arr
+            )
         )
+    )
         /*.then(user => {
             return this.viewUser(user.id);
         });*/
@@ -107,7 +113,6 @@ function subtractFromArray(arr1,arr2){
     arr1.map(item => item.id).forEach((item,i) => {
         if(arr2.indexOf(item)<0)val.push(arr1[i]);
     });
-    console.log('length  sorted down',arr1.length,val.length,'l2.len',arr2.len);
     return val;
 }
 
