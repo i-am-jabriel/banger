@@ -1,7 +1,7 @@
 'use strict'; 
 
 //Rebuild the database??
-const DEBUG = false;
+const DEBUG = true;
 
 //Create test users that do fake activities?
 const TEST = true;
